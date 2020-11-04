@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDate;
 
 @Getter
@@ -15,18 +14,10 @@ import java.time.LocalDate;
 @ToString
 @Entity
 @Table(name = "funcionario")
-public class Funcionario implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_funcionario")
-    @SequenceGenerator(name = "seq_funcionario", sequenceName = "seq_funcionario")
-    private Integer id;
+public class Funcionario extends Pessoa {
 
     @Column(name = "matricula", unique = true, nullable = false)
     private String matricula;
-
-    @Column(name = "nome", nullable = false)
-    private String nome;
 
     @Column(name = "data_contratacao", nullable = false)
     private LocalDate dataContratacao;
@@ -34,6 +25,70 @@ public class Funcionario implements Serializable {
     @Column(name = "data_desligamento")
     private LocalDate dataDesligamento;
 
-    @OneToOne
-    private Usuario usuario;
+    public Funcionario(String matricula, LocalDate dataContratacao, LocalDate dataDesligamento) {
+        super();
+        this.matricula = matricula;
+        this.dataContratacao = dataContratacao;
+        this.dataDesligamento = dataDesligamento;
+    }
+
+    public Funcionario(Integer id,
+                       String documento,
+                       String nome,
+                       Usuario usuario,
+                       String matricula,
+                       LocalDate dataContratacao,
+                       LocalDate dataDesligamento) {
+        super(id, documento, nome, usuario);
+        this.matricula = matricula;
+        this.dataContratacao = dataContratacao;
+        this.dataDesligamento = dataDesligamento;
+    }
+
+    public static class Builder extends Pessoa.Builder {
+
+        private String matricula;
+        private LocalDate dataContratacao;
+        private LocalDate dataDesligamento;
+
+        public Builder id(Integer id) {
+            super.id(id);
+            return this;
+        }
+
+        public Builder documento(String documento) {
+            super.documento(documento);
+            return this;
+        }
+
+        public Builder nome(String nome) {
+            super.nome(nome);
+            return this;
+        }
+
+        public Builder usuario(Usuario usuario) {
+            super.usuario(usuario);
+            return this;
+        }
+
+        public Builder matricula(String matricula) {
+            this.matricula = matricula;
+            return this;
+        }
+
+        public Builder dataContratacao(LocalDate dataContratacao) {
+            this.dataContratacao = dataContratacao;
+            return this;
+        }
+
+        public Builder dataDesligamento(LocalDate dataDesligamento) {
+            this.dataDesligamento = dataDesligamento;
+            return this;
+        }
+
+        public Funcionario build() {
+            return new Funcionario(getId(), getDocumento(), getNome(), getUsuario(), matricula, dataContratacao, dataDesligamento);
+        }
+    }
+
 }
