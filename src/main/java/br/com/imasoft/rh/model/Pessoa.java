@@ -40,7 +40,7 @@ public abstract class Pessoa implements Serializable {
     }
 
     @Getter
-    public static class Builder<T> {
+    public static class Builder {
 
         private Integer id;
         private String documento;

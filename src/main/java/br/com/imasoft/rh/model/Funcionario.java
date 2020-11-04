@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -25,11 +26,40 @@ public class Funcionario extends Pessoa {
     @Column(name = "data_desligamento")
     private LocalDate dataDesligamento;
 
+    @Column(name = "horario_entrada")
+    private LocalTime horarioEntrada;
+
+    @Column(name = "horario_saida")
+    private LocalTime horarioSaida;
+
+    @Column(name = "carga_horaria_semanal")
+    private Integer cargaHorariaSemanal;
+
+    @ManyToOne
+    private Empresa empresa;
+
+    @ManyToOne
+    private Setor setor;
+
     public Funcionario(String matricula, LocalDate dataContratacao, LocalDate dataDesligamento) {
         super();
         this.matricula = matricula;
         this.dataContratacao = dataContratacao;
         this.dataDesligamento = dataDesligamento;
+    }
+
+    public Funcionario(String matricula,
+                       LocalDate dataContratacao,
+                       LocalDate dataDesligamento,
+                       LocalTime horarioEntrada,
+                       LocalTime horarioSaida,
+                       Integer cargaHorariaSemanal) {
+        this.matricula = matricula;
+        this.dataContratacao = dataContratacao;
+        this.dataDesligamento = dataDesligamento;
+        this.horarioEntrada = horarioEntrada;
+        this.horarioSaida = horarioSaida;
+        this.cargaHorariaSemanal = cargaHorariaSemanal;
     }
 
     public Funcionario(Integer id,
@@ -38,11 +68,17 @@ public class Funcionario extends Pessoa {
                        Usuario usuario,
                        String matricula,
                        LocalDate dataContratacao,
-                       LocalDate dataDesligamento) {
+                       LocalDate dataDesligamento,
+                       LocalTime horarioEntrada,
+                       LocalTime horarioSaida,
+                       Integer cargaHorariaSemanal) {
         super(id, documento, nome, usuario);
         this.matricula = matricula;
         this.dataContratacao = dataContratacao;
         this.dataDesligamento = dataDesligamento;
+        this.horarioEntrada = horarioEntrada;
+        this.horarioSaida = horarioSaida;
+        this.cargaHorariaSemanal = cargaHorariaSemanal;
     }
 
     public static class Builder extends Pessoa.Builder {
@@ -50,6 +86,9 @@ public class Funcionario extends Pessoa {
         private String matricula;
         private LocalDate dataContratacao;
         private LocalDate dataDesligamento;
+        private LocalTime horarioEntrada;
+        private LocalTime horarioSaida;
+        private Integer cargaHorariaSemanal;
 
         public Builder id(Integer id) {
             super.id(id);
@@ -86,8 +125,33 @@ public class Funcionario extends Pessoa {
             return this;
         }
 
+        public Builder horarioEntrada(LocalTime horarioEntrada) {
+            this.horarioEntrada = horarioEntrada;
+            return this;
+        }
+
+        public Builder horarioSaida(LocalTime horarioEntrada) {
+            this.horarioSaida = horarioEntrada;
+            return this;
+        }
+
+        public Builder cargaHorariaSemanal(Integer cargaHorariaSemanal) {
+            this.cargaHorariaSemanal = cargaHorariaSemanal;
+            return this;
+        }
+
         public Funcionario build() {
-            return new Funcionario(getId(), getDocumento(), getNome(), getUsuario(), matricula, dataContratacao, dataDesligamento);
+            return new Funcionario(
+                    getId(),
+                    getDocumento(),
+                    getNome(),
+                    getUsuario(),
+                    matricula,
+                    dataContratacao,
+                    dataDesligamento,
+                    horarioEntrada,
+                    horarioSaida,
+                    cargaHorariaSemanal);
         }
     }
 

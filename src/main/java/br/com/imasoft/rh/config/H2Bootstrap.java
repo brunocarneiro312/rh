@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Component
 public class H2Bootstrap implements ApplicationRunner {
@@ -37,6 +38,9 @@ public class H2Bootstrap implements ApplicationRunner {
                         .build())
                 .matricula("7777777")
                 .dataContratacao(LocalDate.now())
+                .horarioEntrada(LocalTime.of(8, 0))
+                .horarioSaida(LocalTime.of(17, 0))
+                .cargaHorariaSemanal(40)
                 .build();
 
         this.funcionarioRepository.save(funcionario);
