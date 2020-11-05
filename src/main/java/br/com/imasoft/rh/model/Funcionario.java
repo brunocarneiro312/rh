@@ -4,10 +4,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.logging.log4j.util.Strings;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
 
 @Getter
 @Setter
@@ -41,25 +46,27 @@ public class Funcionario extends Pessoa {
     @ManyToOne
     private Setor setor;
 
-    public Funcionario(String matricula, LocalDate dataContratacao, LocalDate dataDesligamento) {
-        super();
-        this.matricula = matricula;
-        this.dataContratacao = dataContratacao;
-        this.dataDesligamento = dataDesligamento;
-    }
+    @OneToMany(mappedBy = "funcionario")
+    private Set<Ponto> registrosDePonto = new HashSet<>();
 
     public Funcionario(String matricula,
                        LocalDate dataContratacao,
                        LocalDate dataDesligamento,
                        LocalTime horarioEntrada,
                        LocalTime horarioSaida,
-                       Integer cargaHorariaSemanal) {
+                       Integer cargaHorariaSemanal,
+                       Empresa empresa,
+                       Setor setor,
+                       Set<Ponto> registrosDePonto) {
         this.matricula = matricula;
         this.dataContratacao = dataContratacao;
         this.dataDesligamento = dataDesligamento;
         this.horarioEntrada = horarioEntrada;
         this.horarioSaida = horarioSaida;
         this.cargaHorariaSemanal = cargaHorariaSemanal;
+        this.empresa = empresa;
+        this.setor = setor;
+        this.registrosDePonto = registrosDePonto;
     }
 
     public Funcionario(Integer id,
@@ -71,7 +78,10 @@ public class Funcionario extends Pessoa {
                        LocalDate dataDesligamento,
                        LocalTime horarioEntrada,
                        LocalTime horarioSaida,
-                       Integer cargaHorariaSemanal) {
+                       Integer cargaHorariaSemanal,
+                       Empresa empresa,
+                       Setor setor,
+                       Set<Ponto> registrosDePonto) {
         super(id, documento, nome, usuario);
         this.matricula = matricula;
         this.dataContratacao = dataContratacao;
@@ -79,8 +89,14 @@ public class Funcionario extends Pessoa {
         this.horarioEntrada = horarioEntrada;
         this.horarioSaida = horarioSaida;
         this.cargaHorariaSemanal = cargaHorariaSemanal;
+        this.empresa = empresa;
+        this.setor = setor;
+        this.registrosDePonto = registrosDePonto;
     }
 
+    /**
+     * Builder
+     */
     public static class Builder extends Pessoa.Builder {
 
         private String matricula;
@@ -89,6 +105,9 @@ public class Funcionario extends Pessoa {
         private LocalTime horarioEntrada;
         private LocalTime horarioSaida;
         private Integer cargaHorariaSemanal;
+        private Empresa empresa;
+        private Setor setor;
+        private Set<Ponto> registrosDePonto = new HashSet<>();
 
         public Builder id(Integer id) {
             super.id(id);
@@ -140,6 +159,21 @@ public class Funcionario extends Pessoa {
             return this;
         }
 
+        public Builder setor(Setor setor) {
+            this.setor = setor;
+            return this;
+        }
+
+        public Builder empresa(Empresa empresa) {
+            this.empresa = empresa;
+            return this;
+        }
+
+        public Builder registrosDePonto(Set<Ponto> registrosDePonto) {
+            this.registrosDePonto = registrosDePonto;
+            return this;
+        }
+
         public Funcionario build() {
             return new Funcionario(
                     getId(),
@@ -151,8 +185,33 @@ public class Funcionario extends Pessoa {
                     dataDesligamento,
                     horarioEntrada,
                     horarioSaida,
-                    cargaHorariaSemanal);
+                    cargaHorariaSemanal,
+                    empresa,
+                    setor,
+                    registrosDePonto);
         }
     }
 
+    /**
+     * ---------
+     * Validator
+     * ---------
+     */
+    public static class Validations {
+
+        public static Predicate<Funcionario> isFuncionarioValidToPersist() {
+            return f ->
+                    Objects.nonNull(f)
+                            && Objects.nonNull(f.getEmpresa())
+                            && Objects.nonNull(f.getUsuario())
+                            && Objects.nonNull(f.getSetor())
+                            && Strings.isNotBlank(f.getMatricula())
+                            && Strings.isNotBlank(f.getNome());
+        }
+
+        public static void validate(Funcionario funcionario) {
+            if (Funcionario.Validations.isFuncionarioValidToPersist().negate().test(funcionario))
+                throw new IllegalStateException("Funcionário inválido.");
+        }
+    }
 }

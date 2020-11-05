@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -23,11 +24,11 @@ public class Setor implements Serializable {
     @Column(name = "nome", nullable = false)
     private String nome;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     private Supervisor supervisor;
 
-    @OneToMany(mappedBy = "setor")
-    private Set<Funcionario> funcionarios;
+    @OneToMany(mappedBy = "setor", cascade = CascadeType.PERSIST)
+    private Set<Funcionario> funcionarios = new HashSet<>();
 
     @ManyToOne
     private Empresa empresa;

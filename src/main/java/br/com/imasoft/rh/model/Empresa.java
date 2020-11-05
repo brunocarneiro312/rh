@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -38,11 +39,11 @@ public class Empresa implements Serializable {
     @Column(name = "segmento", nullable = false)
     private String segmento;
 
-    @OneToMany(mappedBy = "empresa")
-    private Set<Funcionario> colaboradores;
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.PERSIST)
+    private Set<Funcionario> colaboradores = new HashSet<>();
 
     @OneToMany(mappedBy = "empresa")
-    private Set<Setor> setores;
+    private Set<Setor> setores = new HashSet<>();
 
     public Empresa(Integer id,
                    Set<Responsavel> responsaveis,
@@ -51,7 +52,8 @@ public class Empresa implements Serializable {
                    String email,
                    String telefone,
                    String segmento,
-                   Set<Funcionario> colaboradores) {
+                   Set<Funcionario> colaboradores,
+                   Set<Setor> setores) {
         this.id = id;
         this.responsaveis = responsaveis;
         this.nome = nome;
@@ -60,6 +62,7 @@ public class Empresa implements Serializable {
         this.telefone = telefone;
         this.segmento = segmento;
         this.colaboradores = colaboradores;
+        this.setores = setores;
     }
 
     public static class Builder {
@@ -67,10 +70,12 @@ public class Empresa implements Serializable {
         private Integer id;
         private Set<Responsavel> responsaveis;
         private String nome;
+        private String email;
         private String cnpj;
         private String telefone;
         private String segmento;
-        private Set<Funcionario> colaboradores;
+        private Set<Funcionario> colaboradores = new HashSet<>();
+        private Set<Setor> setores = new HashSet<>();
 
         public Builder id(Integer id) {
             this.id = id;
@@ -84,6 +89,11 @@ public class Empresa implements Serializable {
 
         public Builder nome(String nome) {
             this.nome = nome;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
             return this;
         }
 
@@ -107,8 +117,13 @@ public class Empresa implements Serializable {
             return this;
         }
 
+        public Builder setores(Set<Setor> setores) {
+            this.setores = setores;
+            return this;
+        }
+
         public Empresa build() {
-            return new Empresa(id, responsaveis, nome, cnpj, build().email, telefone, segmento, colaboradores);
+            return new Empresa(id, responsaveis, nome, cnpj, email, telefone, segmento, colaboradores, setores);
         }
     }
 }
