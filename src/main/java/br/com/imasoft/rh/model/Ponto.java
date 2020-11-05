@@ -48,9 +48,9 @@ public class Ponto {
     }
 
     /**
-     * ---------
-     * Validator
-     * ---------
+     * -----------
+     * Validations
+     * -----------
      */
     public static class Validations {
 

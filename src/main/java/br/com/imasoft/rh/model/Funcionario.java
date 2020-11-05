@@ -95,7 +95,9 @@ public class Funcionario extends Pessoa {
     }
 
     /**
+     * -------
      * Builder
+     * -------
      */
     public static class Builder extends Pessoa.Builder {
 

@@ -32,7 +32,7 @@ public class FuncionarioServiceImpl implements FuncionarioService {
             return this.pontoRepository.save(ponto);
         }
         catch (Exception e) {
-            System.err.println("Não foi possível registrar o ponto do funcionario [Matrícula: " + funcionario.getMatricula() + "]");
+            System.err.println("Não foi possível registrar o ponto do funcionario.");
             throw new Exception(e);
         }
     }
@@ -40,6 +40,11 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     @Override
     public Funcionario registrarNovoFuncionario(Funcionario funcionario) throws Exception {
         try {
+            /**
+             * TODO:
+             * - se o usuário não existir, registrar
+             * - se o usuário existir, altera funcionário e seta usuário para ativo
+             */
             Funcionario.Validations.validate(funcionario);
             if (funcionario.getDataContratacao() == null) {
                 funcionario.setDataContratacao(LocalDate.now());
@@ -64,6 +69,11 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     @Override
     public Funcionario desligarFuncionario(Funcionario funcionario) throws Exception {
         try {
+            /**
+             * TODO:
+             * - preencher data de desligamento do funcionário
+             * - alterar o usuário do funcionaŕio para inativo (active = false)
+             */
             return null;
         }
         catch (Exception e) {
@@ -74,6 +84,7 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     @Override
     public List<Funcionario> consultarFeriasDosFuncionarios() throws Exception {
         try {
+            // TODO: apenas dos usuários ativos
             return null;
         }
         catch (Exception e) {
@@ -84,6 +95,7 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     @Override
     public List<Funcionario> consultarFeriasDosFuncionarios(Integer nosProximosXDias) throws Exception {
         try {
+            // TODO: se o parâmetro for null ou 0, listar as férias de todos os funcionários ativos
             return null;
         }
         catch (Exception e) {
